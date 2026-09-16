@@ -1,0 +1,11 @@
+{
+  "@@locale": "fr",
+  "appTitle": "EduTN 6ème",
+  "@appTitle": {
+    "description": "Nom de l'application affiché dans le titre et l'écran d'accueil."
+  },
+  "placeholderHome": "EduTN 6ème — squelette technique (Étape 2)",
+  "@placeholderHome": {
+    "description": "Texte affiché sur l'écran d'accueil provisoire tant qu'aucun écran fonctionnel n'a été développé."
+  }
+}
