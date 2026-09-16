@@ -20,6 +20,11 @@ dependencies:
   intl: ^0.20.2
   flutter_secure_storage: ^9.2.2
   shared_preferences: ^2.3.3
+  # TODO(production): google_fonts telecharge la police Cairo a la volee au
+  # premier lancement (voir lib/core/theme/app_theme.dart). Avant la mise en
+  # production, bundler Cairo en asset local (police + entree `fonts:` dans
+  # ce pubspec.yaml) pour supprimer toute dependance reseau au rendu texte.
+  # Voir lib/core/theme/README.md, section "RTL et langue".
   google_fonts: ^6.2.1
 
 dev_dependencies:

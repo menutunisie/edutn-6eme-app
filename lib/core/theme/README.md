@@ -118,9 +118,17 @@ Les items sont définis par rôle dans `shared/navigation/nav_item.dart`
   visuel de ses enfants selon la `Directionality` ambiante.
 - Police : **Cairo** (via `google_fonts`) pour l'ensemble de l'app — bonne
   lisibilité en arabe et en latin, évite un changement de police visible au
-  changement de langue. **Décision à valider** : la police est téléchargée à
-  la volée (mode par défaut de `google_fonts`) ; pour une fiabilité hors-ligne
-  en production, il faudra la bundler en asset local (voir doc du package).
+  changement de langue.
+
+  > **TODO (avant mise en production)** : Cairo est actuellement téléchargée
+  > à la volée au premier lancement (comportement par défaut de
+  > `google_fonts`, voir `AppTheme._buildTheme` dans `app_theme.dart`). Cela
+  > introduit une dépendance réseau au tout premier rendu de texte. À
+  > remplacer par la police bundlée en asset local (télécharger les fichiers
+  > `.ttf` Cairo, les référencer dans `pubspec.yaml` sous `flutter: fonts:`,
+  > puis utiliser `TextTheme(fontFamily: 'Cairo')` à la place de
+  > `GoogleFonts.cairoTextTheme(...)`). Voir aussi le TODO correspondant dans
+  > `pubspec.yaml` à côté de la dépendance `google_fonts`.
 
 ## Accessibilité — vérification des contrastes
 
