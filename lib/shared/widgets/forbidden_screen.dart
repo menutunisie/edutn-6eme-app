@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n/generated/app_localizations.dart';
+import '../../core/theme/app_colors.dart';
+import 'app_button.dart';
+
 class ForbiddenScreen extends StatelessWidget {
   const ForbiddenScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -13,16 +20,17 @@ class ForbiddenScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.block, size: 48),
+              Icon(Icons.block, size: 48, color: colors.red),
               const SizedBox(height: 16),
-              Text('Accès refusé', style: Theme.of(context).textTheme.headlineSmall),
+              Text(l10n.forbiddenTitle, style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 8),
-              const Text(
-                "Votre rôle ne permet pas d'accéder à cette page.",
+              Text(
+                l10n.forbiddenMessage,
                 textAlign: TextAlign.center,
+                style: TextStyle(color: colors.textSecondary),
               ),
               const SizedBox(height: 24),
-              FilledButton(onPressed: () => context.go('/'), child: const Text('Retour')),
+              AppButton(label: l10n.backButton, onPressed: () => context.go('/')),
             ],
           ),
         ),

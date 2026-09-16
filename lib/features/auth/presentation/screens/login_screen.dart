@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/app_button.dart';
 import '../controllers/auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -30,16 +33,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .login(email: _emailController.text.trim(), password: _passwordController.text);
   }
 
+  String _errorMessage(AppLocalizations l10n, AuthError error) => switch (error) {
+    AuthError.invalidCredentials => l10n.errorInvalidCredentials,
+    AuthError.disabledAccount => l10n.errorDisabledAccount,
+    AuthError.sessionExpired => l10n.errorSessionExpired,
+    AuthError.network => l10n.errorGeneric,
+  };
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.status == AuthStatus.authenticating;
 
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
-      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+      if (next.error != null && next.error != previous?.error) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+          ..showSnackBar(SnackBar(content: Text(_errorMessage(l10n, next.error!))));
       }
     });
 
@@ -55,26 +67,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Icon(Icons.school_rounded, size: 40, color: colors.primary),
+                  const SizedBox(height: 12),
                   Text(
-                    'EduTN 6ème',
+                    l10n.appTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Connectez-vous avec le compte fourni par votre établissement.',
+                    l10n.loginSubtitle,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: colors.textSecondary),
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     autofillHints: const [AutofillHints.email],
-                    decoration: const InputDecoration(labelText: 'Email'),
+                    decoration: InputDecoration(labelText: l10n.emailLabel),
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) return 'Email requis';
-                      if (!value.contains('@')) return 'Email invalide';
+                      if (value == null || value.trim().isEmpty) return l10n.emailRequired;
+                      if (!value.contains('@')) return l10n.emailInvalid;
                       return null;
                     },
                   ),
@@ -84,28 +100,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     obscureText: _obscurePassword,
                     autofillHints: const [AutofillHints.password],
                     decoration: InputDecoration(
-                      labelText: 'Mot de passe',
+                      labelText: l10n.passwordLabel,
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                         onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Mot de passe requis';
+                      if (value == null || value.isEmpty) return l10n.passwordRequired;
                       return null;
                     },
                     onFieldSubmitted: (_) => _submit(),
                   ),
                   const SizedBox(height: 24),
-                  FilledButton(
+                  AppButton(
+                    label: l10n.loginButton,
+                    isLoading: isLoading,
                     onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Se connecter'),
                   ),
                 ],
               ),

@@ -12,21 +12,22 @@ enum AuthStatus {
   unauthenticated,
 }
 
+/// Erreur d'authentification, sous forme de code plutot que de message en
+/// dur : la localisation (FR/AR) se fait dans le widget, via
+/// AppLocalizations, jamais dans le controller (qui n'a pas de BuildContext).
+enum AuthError { invalidCredentials, disabledAccount, network, sessionExpired }
+
 class AuthState {
-  const AuthState({this.status = AuthStatus.unknown, this.user, this.errorMessage});
+  const AuthState({this.status = AuthStatus.unknown, this.user, this.error});
 
   final AuthStatus status;
   final CurrentUser? user;
-  final String? errorMessage;
+  final AuthError? error;
 
   bool get isAuthenticated => status == AuthStatus.authenticated && user != null;
 
-  AuthState copyWith({AuthStatus? status, CurrentUser? user, String? errorMessage}) {
-    return AuthState(
-      status: status ?? this.status,
-      user: user ?? this.user,
-      errorMessage: errorMessage,
-    );
+  AuthState copyWith({AuthStatus? status, CurrentUser? user, AuthError? error}) {
+    return AuthState(status: status ?? this.status, user: user ?? this.user, error: error);
   }
 }
 
@@ -58,7 +59,7 @@ class AuthController extends StateNotifier<AuthState> {
       final user = await _authRepository.getCurrentUser();
       state = AuthState(status: AuthStatus.authenticated, user: user);
     } on DioException catch (error) {
-      state = AuthState(status: AuthStatus.unauthenticated, errorMessage: _messageFromError(error));
+      state = AuthState(status: AuthStatus.unauthenticated, error: _errorFrom(error));
     }
   }
 
@@ -72,15 +73,15 @@ class AuthController extends StateNotifier<AuthState> {
   Future<void> forceLogout() async {
     state = const AuthState(
       status: AuthStatus.unauthenticated,
-      errorMessage: 'Votre session a expiré, veuillez vous reconnecter.',
+      error: AuthError.sessionExpired,
     );
   }
 
-  String _messageFromError(DioException error) {
+  AuthError _errorFrom(DioException error) {
     final statusCode = error.response?.statusCode;
-    if (statusCode == 401) return 'Email ou mot de passe incorrect.';
-    if (statusCode == 403) return 'Ce compte est désactivé.';
-    return 'Une erreur est survenue. Vérifiez votre connexion.';
+    if (statusCode == 401) return AuthError.invalidCredentials;
+    if (statusCode == 403) return AuthError.disabledAccount;
+    return AuthError.network;
   }
 }
 

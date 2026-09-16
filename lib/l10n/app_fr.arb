@@ -2,10 +2,64 @@
   "@@locale": "fr",
   "appTitle": "EduTN 6ème",
   "@appTitle": {
-    "description": "Nom de l'application affiché dans le titre et l'écran d'accueil."
+    "description": "Nom de l'application affiché dans le titre et le header."
   },
-  "placeholderHome": "EduTN 6ème — squelette technique (Étape 2)",
-  "@placeholderHome": {
-    "description": "Texte affiché sur l'écran d'accueil provisoire tant qu'aucun écran fonctionnel n'a été développé."
-  }
+
+  "loginSubtitle": "Connectez-vous avec le compte fourni par votre établissement.",
+  "emailLabel": "Email",
+  "emailRequired": "Email requis",
+  "emailInvalid": "Email invalide",
+  "passwordLabel": "Mot de passe",
+  "passwordRequired": "Mot de passe requis",
+  "loginButton": "Se connecter",
+  "errorInvalidCredentials": "Email ou mot de passe incorrect.",
+  "errorDisabledAccount": "Ce compte est désactivé.",
+  "errorGeneric": "Une erreur est survenue. Vérifiez votre connexion.",
+  "errorSessionExpired": "Votre session a expiré, veuillez vous reconnecter.",
+
+  "forbiddenTitle": "Accès refusé",
+  "forbiddenMessage": "Votre rôle ne permet pas d'accéder à cette page.",
+  "backButton": "Retour",
+
+  "roleStudent": "Élève",
+  "roleTeacher": "Enseignant",
+  "roleAdmin": "Administrateur",
+
+  "navDashboard": "Tableau de bord",
+  "navUsers": "Utilisateurs",
+
+  "logoutTooltip": "Se déconnecter",
+  "languageTooltip": "Changer de langue",
+  "themeTooltip": "Changer de thème",
+
+  "connectedAs": "Connecté en tant que {name} ({role})",
+  "@connectedAs": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "role": {"type": "String"}
+    }
+  },
+  "manageUsersButton": "Gérer les utilisateurs",
+
+  "adminUsersTitle": "Gestion des utilisateurs",
+  "createUserButton": "Créer un utilisateur",
+  "createUserDialogTitle": "Créer un utilisateur",
+  "fullNameLabel": "Nom complet",
+  "fullNameRequired": "Nom requis",
+  "temporaryPasswordLabel": "Mot de passe provisoire",
+  "passwordMinLength": "8 caractères minimum",
+  "roleFieldLabel": "Rôle",
+  "cancelButton": "Annuler",
+  "createButton": "Créer",
+  "noUsersMessage": "Aucun utilisateur pour le moment.",
+  "loadErrorMessage": "Erreur de chargement : {error}",
+  "@loadErrorMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "duplicateEmailError": "Cet email est déjà utilisé.",
+  "createUserError": "Impossible de créer l'utilisateur.",
+  "activeLabel": "Actif",
+  "inactiveLabel": "Inactif"
 }

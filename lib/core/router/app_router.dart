@@ -7,15 +7,18 @@ import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../shared/models/user_role.dart';
+import '../../shared/widgets/adaptive_scaffold.dart';
 import '../../shared/widgets/forbidden_screen.dart';
 import '../../shared/widgets/role_dashboard_placeholder.dart';
 
-/// Squelette de routing avec authentification et garde par role (Etape 3).
+/// Routing avec authentification, garde par role et coquille de navigation
+/// adaptative (Etape 4).
 ///
 /// - non authentifie -> redirige vers /login (sauf pendant le bootstrap : /)
 /// - authentifie sur /login ou / -> redirige vers le dashboard de son role
 /// - route /admin/** reservee au role ADMIN, /teacher/** a TEACHER,
 ///   /student/** a STUDENT (sinon redirection vers /forbidden)
+/// - /login, /forbidden et / restent hors de la ShellRoute (pas de nav/header)
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ValueNotifier<int>(0);
   ref.listen(authControllerProvider, (_, _) => refreshNotifier.value++);
@@ -52,20 +55,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(path: '/forbidden', builder: (context, state) => const ForbiddenScreen()),
-      GoRoute(
-        path: '/student',
-        builder: (context, state) => const RoleDashboardPlaceholder(title: 'Espace élève'),
-      ),
-      GoRoute(
-        path: '/teacher',
-        builder: (context, state) => const RoleDashboardPlaceholder(title: 'Espace enseignant'),
-      ),
-      GoRoute(
-        path: '/admin',
-        builder: (context, state) =>
-            const RoleDashboardPlaceholder(title: 'Espace administrateur'),
+      ShellRoute(
+        builder: (context, state, child) {
+          return AdaptiveScaffold(currentLocation: state.uri.toString(), child: child);
+        },
         routes: [
-          GoRoute(path: 'users', builder: (context, state) => const AdminUsersScreen()),
+          GoRoute(path: '/student', builder: (context, state) => const RoleDashboardPlaceholder()),
+          GoRoute(path: '/teacher', builder: (context, state) => const RoleDashboardPlaceholder()),
+          GoRoute(
+            path: '/admin',
+            builder: (context, state) => const RoleDashboardPlaceholder(),
+            routes: [
+              GoRoute(path: 'users', builder: (context, state) => const AdminUsersScreen()),
+            ],
+          ),
         ],
       ),
     ],

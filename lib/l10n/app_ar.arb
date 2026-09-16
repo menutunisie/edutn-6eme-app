@@ -1,5 +1,51 @@
 {
   "@@locale": "ar",
   "appTitle": "إيدو تي أن سادسة",
-  "placeholderHome": "إيدو تي أن سادسة — الهيكل التقني (المرحلة 2)"
+
+  "loginSubtitle": "سجّل الدخول باستخدام الحساب الذي زوّدتك به مؤسستك.",
+  "emailLabel": "البريد الإلكتروني",
+  "emailRequired": "البريد الإلكتروني مطلوب",
+  "emailInvalid": "بريد إلكتروني غير صالح",
+  "passwordLabel": "كلمة المرور",
+  "passwordRequired": "كلمة المرور مطلوبة",
+  "loginButton": "تسجيل الدخول",
+  "errorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "errorDisabledAccount": "تم تعطيل هذا الحساب.",
+  "errorGeneric": "حدث خطأ ما. تحقق من اتصالك بالإنترنت.",
+  "errorSessionExpired": "انتهت صلاحية جلستك، يرجى تسجيل الدخول مجدداً.",
+
+  "forbiddenTitle": "الوصول مرفوض",
+  "forbiddenMessage": "لا يسمح لك دورك بالوصول إلى هذه الصفحة.",
+  "backButton": "رجوع",
+
+  "roleStudent": "تلميذ",
+  "roleTeacher": "معلّم",
+  "roleAdmin": "مسؤول",
+
+  "navDashboard": "لوحة التحكم",
+  "navUsers": "المستخدمون",
+
+  "logoutTooltip": "تسجيل الخروج",
+  "languageTooltip": "تغيير اللغة",
+  "themeTooltip": "تغيير المظهر",
+
+  "connectedAs": "متصل باسم {name} ({role})",
+  "manageUsersButton": "إدارة المستخدمين",
+
+  "adminUsersTitle": "إدارة المستخدمين",
+  "createUserButton": "إنشاء مستخدم",
+  "createUserDialogTitle": "إنشاء مستخدم",
+  "fullNameLabel": "الاسم الكامل",
+  "fullNameRequired": "الاسم مطلوب",
+  "temporaryPasswordLabel": "كلمة مرور مؤقتة",
+  "passwordMinLength": "8 أحرف على الأقل",
+  "roleFieldLabel": "الدور",
+  "cancelButton": "إلغاء",
+  "createButton": "إنشاء",
+  "noUsersMessage": "لا يوجد أي مستخدم حالياً.",
+  "loadErrorMessage": "خطأ في التحميل: {error}",
+  "duplicateEmailError": "هذا البريد الإلكتروني مستخدم بالفعل.",
+  "createUserError": "تعذّر إنشاء المستخدم.",
+  "activeLabel": "نشط",
+  "inactiveLabel": "غير نشط"
 }

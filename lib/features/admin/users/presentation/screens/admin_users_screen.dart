@@ -2,7 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../shared/models/user_role.dart';
+import '../../../../../shared/widgets/app_badge.dart';
+import '../../../../../shared/widgets/app_button.dart';
 import '../../data/admin_user_repository.dart';
 import '../../data/models/admin_user.dart';
 
@@ -17,21 +21,25 @@ class AdminUsersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
     final usersAsync = ref.watch(_adminUsersProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Gestion des utilisateurs')),
+      appBar: AppBar(title: Text(l10n.adminUsersTitle)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openCreateUserDialog(context, ref),
         icon: const Icon(Icons.person_add),
-        label: const Text('Créer un utilisateur'),
+        label: Text(l10n.createUserButton),
       ),
       body: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Erreur de chargement : $error')),
+        error: (error, _) => Center(child: Text(l10n.loadErrorMessage(error.toString()))),
         data: (users) {
           if (users.isEmpty) {
-            return const Center(child: Text('Aucun utilisateur pour le moment.'));
+            return Center(
+              child: Text(l10n.noUsersMessage, style: TextStyle(color: colors.textTertiary)),
+            );
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -41,14 +49,23 @@ class AdminUsersScreen extends ConsumerWidget {
               final user = users[index];
               return ListTile(
                 leading: CircleAvatar(
+                  backgroundColor: colors.primarySoft,
+                  foregroundColor: colors.primaryHover,
                   child: Text(user.fullName.isNotEmpty ? user.fullName[0].toUpperCase() : '?'),
                 ),
                 title: Text(user.fullName),
-                subtitle: Text('${user.email} · ${user.role.label}'),
-                trailing: Icon(
-                  user.isActive ? Icons.check_circle : Icons.cancel,
-                  color: user.isActive ? Colors.green : Colors.red,
-                ),
+                subtitle: Text('${user.email} · ${roleLabel(l10n, user.role)}'),
+                trailing: user.isActive
+                    ? AppBadge(
+                        label: l10n.activeLabel,
+                        variant: AppBadgeVariant.success,
+                        icon: Icons.check_circle_outline,
+                      )
+                    : AppBadge(
+                        label: l10n.inactiveLabel,
+                        variant: AppBadgeVariant.error,
+                        icon: Icons.cancel_outlined,
+                      ),
               );
             },
           );
@@ -58,10 +75,7 @@ class AdminUsersScreen extends ConsumerWidget {
   }
 
   Future<void> _openCreateUserDialog(BuildContext context, WidgetRef ref) async {
-    await showDialog<void>(
-      context: context,
-      builder: (context) => const _CreateUserDialog(),
-    );
+    await showDialog<void>(context: context, builder: (context) => const _CreateUserDialog());
     ref.invalidate(_adminUsersProvider);
   }
 }
@@ -90,7 +104,7 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(AppLocalizations l10n) async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -111,8 +125,8 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
     } on DioException catch (error) {
       setState(() {
         _errorMessage = error.response?.statusCode == 409
-            ? 'Cet email est déjà utilisé.'
-            : "Impossible de créer l'utilisateur.";
+            ? l10n.duplicateEmailError
+            : l10n.createUserError;
       });
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -121,8 +135,11 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
+
     return AlertDialog(
-      title: const Text('Créer un utilisateur'),
+      title: Text(l10n.createUserDialogTitle),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -131,39 +148,40 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
             children: [
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(labelText: l10n.emailLabel),
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) => (value == null || !value.contains('@'))
-                    ? 'Email invalide'
-                    : null,
+                validator: (value) =>
+                    (value == null || !value.contains('@')) ? l10n.emailInvalid : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _fullNameController,
-                decoration: const InputDecoration(labelText: 'Nom complet'),
+                decoration: InputDecoration(labelText: l10n.fullNameLabel),
                 validator: (value) =>
-                    (value == null || value.trim().isEmpty) ? 'Nom requis' : null,
+                    (value == null || value.trim().isEmpty) ? l10n.fullNameRequired : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Mot de passe provisoire'),
+                decoration: InputDecoration(labelText: l10n.temporaryPasswordLabel),
                 obscureText: true,
                 validator: (value) =>
-                    (value == null || value.length < 8) ? '8 caractères minimum' : null,
+                    (value == null || value.length < 8) ? l10n.passwordMinLength : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<UserRole>(
                 initialValue: _role,
-                decoration: const InputDecoration(labelText: 'Rôle'),
+                decoration: InputDecoration(labelText: l10n.roleFieldLabel),
                 items: UserRole.values
-                    .map((role) => DropdownMenuItem(value: role, child: Text(role.label)))
+                    .map(
+                      (role) => DropdownMenuItem(value: role, child: Text(roleLabel(l10n, role))),
+                    )
                     .toList(),
                 onChanged: (value) => setState(() => _role = value ?? _role),
               ),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 12),
-                Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+                Text(_errorMessage!, style: TextStyle(color: colors.red)),
               ],
             ],
           ),
@@ -172,17 +190,12 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
       actions: [
         TextButton(
           onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Annuler'),
+          child: Text(l10n.cancelButton),
         ),
-        FilledButton(
-          onPressed: _isSubmitting ? null : _submit,
-          child: _isSubmitting
-              ? const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Créer'),
+        AppButton(
+          label: l10n.createButton,
+          isLoading: _isSubmitting,
+          onPressed: _isSubmitting ? null : () => _submit(l10n),
         ),
       ],
     );
