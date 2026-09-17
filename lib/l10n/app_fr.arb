@@ -61,5 +61,18 @@
   "duplicateEmailError": "Cet email est déjà utilisé.",
   "createUserError": "Impossible de créer l'utilisateur.",
   "activeLabel": "Actif",
-  "inactiveLabel": "Inactif"
+  "inactiveLabel": "Inactif",
+
+  "navContent": "Gestion de contenu",
+  "adminContentTitle": "Gestion de contenu",
+  "statusDraft": "Brouillon",
+  "statusToReview": "À vérifier",
+  "statusPublished": "Publié",
+  "statusArchived": "Archivé",
+  "noTermsMessage": "Aucun trimestre pour cette matière.",
+  "noUnitsMessage": "Aucune unité pour ce trimestre.",
+  "noLessonsMessage": "Aucune leçon pour cette unité.",
+  "noSubjectsMessage": "Aucune matière pour le moment.",
+  "contentLoadError": "Impossible de charger le contenu.",
+  "retryButton": "Réessayer"
 }

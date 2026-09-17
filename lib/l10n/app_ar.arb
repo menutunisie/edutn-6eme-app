@@ -47,5 +47,18 @@
   "duplicateEmailError": "هذا البريد الإلكتروني مستخدم بالفعل.",
   "createUserError": "تعذّر إنشاء المستخدم.",
   "activeLabel": "نشط",
-  "inactiveLabel": "غير نشط"
+  "inactiveLabel": "غير نشط",
+
+  "navContent": "إدارة المحتوى",
+  "adminContentTitle": "إدارة المحتوى",
+  "statusDraft": "مسودة",
+  "statusToReview": "قيد المراجعة",
+  "statusPublished": "منشور",
+  "statusArchived": "مؤرشف",
+  "noTermsMessage": "لا يوجد أي ثلاثي لهذه المادة.",
+  "noUnitsMessage": "لا توجد أي وحدة لهذا الثلاثي.",
+  "noLessonsMessage": "لا يوجد أي درس لهذه الوحدة.",
+  "noSubjectsMessage": "لا توجد أي مادة حالياً.",
+  "contentLoadError": "تعذّر تحميل المحتوى.",
+  "retryButton": "إعادة المحاولة"
 }

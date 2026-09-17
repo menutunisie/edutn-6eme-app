@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/content/presentation/screens/admin_content_screen.dart';
 import '../../features/admin/users/presentation/screens/admin_users_screen.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -67,6 +68,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const RoleDashboardPlaceholder(),
             routes: [
               GoRoute(path: 'users', builder: (context, state) => const AdminUsersScreen()),
+              GoRoute(path: 'content', builder: (context, state) => const AdminContentScreen()),
             ],
           ),
         ],

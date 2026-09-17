@@ -19,8 +19,7 @@ class NavItem {
   final String route;
 }
 
-/// Items de navigation par role. Volontairement minimal pour l'instant (un
-/// seul dashboard placeholder + gestion des utilisateurs pour l'admin) :
+/// Items de navigation par role. Volontairement minimal pour l'instant :
 /// aucune destination fictive n'est ajoutee tant que l'ecran reel n'existe
 /// pas (voir etapes suivantes pour les matieres/cours/favoris...).
 List<NavItem> navItemsForRole(AppLocalizations l10n, UserRole role) {
@@ -37,12 +36,19 @@ List<NavItem> navItemsForRole(AppLocalizations l10n, UserRole role) {
       label: l10n.navDashboard,
       route: dashboardRoute,
     ),
-    if (role == UserRole.admin)
+    if (role == UserRole.admin) ...[
       NavItem(
         icon: Icons.people_outline,
         selectedIcon: Icons.people,
         label: l10n.navUsers,
         route: '/admin/users',
       ),
+      NavItem(
+        icon: Icons.folder_open_outlined,
+        selectedIcon: Icons.folder,
+        label: l10n.navContent,
+        route: '/admin/content',
+      ),
+    ],
   ];
 }
