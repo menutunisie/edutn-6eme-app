@@ -60,5 +60,6 @@
   "noLessonsMessage": "لا يوجد أي درس لهذه الوحدة.",
   "noSubjectsMessage": "لا توجد أي مادة حالياً.",
   "contentLoadError": "تعذّر تحميل المحتوى.",
-  "retryButton": "إعادة المحاولة"
+  "retryButton": "إعادة المحاولة",
+  "titleFrUnavailable": "الفرنسية غير متوفرة"
 }

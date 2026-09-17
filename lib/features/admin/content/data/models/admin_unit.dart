@@ -14,7 +14,7 @@ class AdminUnit {
 
   final String id;
   final String termId;
-  final String titleFr;
+  final String? titleFr;
   final String? titleAr;
   final ContentStatus status;
   final String? description;
@@ -23,7 +23,7 @@ class AdminUnit {
   factory AdminUnit.fromJson(Map<String, dynamic> json) => AdminUnit(
     id: json['id'] as String,
     termId: json['term_id'] as String,
-    titleFr: json['title_fr'] as String,
+    titleFr: json['title_fr'] as String?,
     titleAr: json['title_ar'] as String?,
     status: contentStatusFromApi(json['status'] as String),
     description: json['description'] as String?,

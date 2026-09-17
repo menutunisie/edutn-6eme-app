@@ -74,5 +74,6 @@
   "noLessonsMessage": "Aucune leçon pour cette unité.",
   "noSubjectsMessage": "Aucune matière pour le moment.",
   "contentLoadError": "Impossible de charger le contenu.",
-  "retryButton": "Réessayer"
+  "retryButton": "Réessayer",
+  "titleFrUnavailable": "FR non disponible"
 }

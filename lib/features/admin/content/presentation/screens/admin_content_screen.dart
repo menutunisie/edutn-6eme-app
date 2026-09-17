@@ -203,7 +203,24 @@ class _UnitTileState extends ConsumerState<_UnitTile> {
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
     final (label, variant) = contentStatusBadge(l10n, widget.unit.status);
+    final titleFr = widget.unit.titleFr;
     final titleAr = widget.unit.titleAr;
+
+    // Pas de placeholder trompeur : si aucune traduction FR officielle
+    // n'est encore disponible (title_fr null), on affiche le titre arabe
+    // comme intitule principal (en RTL) et on le signale explicitement via
+    // un badge, plutot que d'inventer ou de masquer l'absence de titre FR.
+    final Widget titleWidget = titleFr != null
+        ? Text(titleFr)
+        : titleAr != null
+        ? Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(titleAr, textAlign: TextAlign.start),
+          )
+        : Text(
+            l10n.titleFrUnavailable,
+            style: TextStyle(color: colors.textDisabled, fontStyle: FontStyle.italic),
+          );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -216,20 +233,24 @@ class _UnitTileState extends ConsumerState<_UnitTile> {
         onExpansionChanged: (value) => setState(() => _expanded = value),
         title: Row(
           children: [
-            Expanded(child: Text(widget.unit.titleFr)),
+            Expanded(child: titleWidget),
+            if (titleFr == null) ...[
+              const SizedBox(width: 8),
+              AppBadge(label: l10n.titleFrUnavailable, variant: AppBadgeVariant.warning),
+            ],
             const SizedBox(width: 8),
             AppBadge(label: label, variant: variant),
           ],
         ),
-        subtitle: titleAr == null
-            ? null
-            : Padding(
+        subtitle: (titleFr != null && titleAr != null)
+            ? Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Directionality(
                   textDirection: TextDirection.rtl,
                   child: Text(titleAr, textAlign: TextAlign.start),
                 ),
-              ),
+              )
+            : null,
         children: [if (_expanded) _LessonsSection(unitId: widget.unit.id)],
       ),
     );
