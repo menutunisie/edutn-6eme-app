@@ -2,13 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/dio_client.dart';
+import 'models/admin_axis.dart';
 import 'models/admin_lesson.dart';
 import 'models/admin_subject.dart';
 import 'models/admin_term.dart';
 import 'models/admin_unit.dart';
 
 /// Lecture seule de la hierarchie de contenu (ADMIN) : Subject -> Term ->
-/// Unit -> Lesson. Aucune creation/edition/suppression a cette etape.
+/// Unit -> (Axis optionnel) -> Lesson. Aucune creation/edition/suppression
+/// de Subject/Term/Unit/Lesson a cette etape ; Axis a une ecriture minimale
+/// (POST/PATCH) demandee explicitement.
 class ContentRepository {
   const ContentRepository(this._dio);
 
@@ -37,10 +40,21 @@ class ContentRepository {
     return response.data!.map((json) => AdminUnit.fromJson(json as Map<String, dynamic>)).toList();
   }
 
-  Future<List<AdminLesson>> getLessons(String unitId) async {
+  Future<List<AdminAxis>> getAxes(String unitId) async {
+    final response = await _dio.get<List<dynamic>>(
+      '/admin/axes',
+      queryParameters: {'unit_id': unitId},
+    );
+    return response.data!.map((json) => AdminAxis.fromJson(json as Map<String, dynamic>)).toList();
+  }
+
+  /// [axisId] optionnel : affine sur les Lesson d'un Axis precis. Sans lui,
+  /// retourne toutes les Lesson de l'Unit (cas des matieres sans Axis, ex.
+  /// Mathematiques).
+  Future<List<AdminLesson>> getLessons(String unitId, {String? axisId}) async {
     final response = await _dio.get<List<dynamic>>(
       '/admin/lessons',
-      queryParameters: {'unit_id': unitId},
+      queryParameters: {'unit_id': unitId, 'axis_id': ?axisId},
     );
     return response.data!
         .map((json) => AdminLesson.fromJson(json as Map<String, dynamic>))
@@ -65,8 +79,17 @@ final unitsProvider = FutureProvider.family<List<AdminUnit>, String>((ref, termI
   return ref.watch(contentRepositoryProvider).getUnits(termId);
 });
 
-final lessonsProvider = FutureProvider.family<List<AdminLesson>, String>((ref, unitId) {
-  return ref.watch(contentRepositoryProvider).getLessons(unitId);
+final axesProvider = FutureProvider.family<List<AdminAxis>, String>((ref, unitId) {
+  return ref.watch(contentRepositoryProvider).getAxes(unitId);
+});
+
+/// Cle composite (record) : Riverpod la compare par valeur, donc
+/// `(unitId: 'a', axisId: null)` reste un cache stable independamment de
+/// l'endroit ou il est construit.
+typedef LessonsQuery = ({String unitId, String? axisId});
+
+final lessonsProvider = FutureProvider.family<List<AdminLesson>, LessonsQuery>((ref, query) {
+  return ref.watch(contentRepositoryProvider).getLessons(query.unitId, axisId: query.axisId);
 });
 
 final subjectsProvider = FutureProvider.autoDispose<List<AdminSubject>>((ref) {

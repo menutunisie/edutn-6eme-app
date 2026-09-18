@@ -10,6 +10,7 @@ import '../../../../../shared/widgets/empty_state_widget.dart';
 import '../../../../../shared/widgets/error_state_widget.dart';
 import '../../../../../shared/widgets/loading_state_widget.dart';
 import '../../data/content_repository.dart';
+import '../../data/models/admin_axis.dart';
 import '../../data/models/admin_lesson.dart';
 import '../../data/models/admin_subject.dart';
 import '../../data/models/admin_term.dart';
@@ -18,10 +19,16 @@ import '../../data/models/content_status.dart';
 import '../../data/models/subject_display.dart';
 
 /// Ecran admin "Gestion de contenu" : lecture seule de la hierarchie
-/// Matiere -> Trimestre -> Unite -> Lecon, avec statut visible via
-/// AppBadge. Aucune creation/edition/suppression a cette etape.
+/// Matiere -> Trimestre -> Unite -> (Axe optionnel) -> Lecon, avec statut
+/// visible via AppBadge. Aucune creation/edition/suppression a cette etape
+/// (hormis Axis : POST/PATCH demandes explicitement, non exposes dans cet
+/// ecran en lecture).
 ///
-/// Chargement paresseux : chaque niveau (Term/Unit/Lesson) n'est fetch
+/// Le niveau Axe ne s'affiche que s'il existe pour l'Unite depliee (ex.
+/// Eveil scientifique) ; sinon l'Unite se deplie directement sur ses Lecons
+/// (ex. Mathematiques), sans niveau intermediaire.
+///
+/// Chargement paresseux : chaque niveau (Term/Unit/Axis/Lesson) n'est fetch
 /// qu'a la premiere ouverture de son parent (voir _expanded dans chaque
 /// *Tile ci-dessous), pas au chargement initial de l'ecran.
 class AdminContentScreen extends ConsumerWidget {
@@ -251,21 +258,120 @@ class _UnitTileState extends ConsumerState<_UnitTile> {
                 ),
               )
             : null,
-        children: [if (_expanded) _LessonsSection(unitId: widget.unit.id)],
+        children: [if (_expanded) _UnitChildrenSection(unitId: widget.unit.id)],
       ),
     );
   }
 }
 
-class _LessonsSection extends ConsumerWidget {
-  const _LessonsSection({required this.unitId});
+/// Insere le niveau Axe s'il existe pour cette Unite, sinon deplie
+/// directement sur les Lecons (matieres sans Axis, ex. Mathematiques).
+class _UnitChildrenSection extends ConsumerWidget {
+  const _UnitChildrenSection({required this.unitId});
 
   final String unitId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final lessonsAsync = ref.watch(lessonsProvider(unitId));
+    final axesAsync = ref.watch(axesProvider(unitId));
+
+    return axesAsync.when(
+      loading: () => const LoadingStateWidget(),
+      error: (error, _) => ErrorStateWidget(
+        message: l10n.contentLoadError,
+        onRetry: () => ref.invalidate(axesProvider(unitId)),
+      ),
+      data: (axes) {
+        if (axes.isEmpty) {
+          // _LessonsSection se pad elle-meme : pas de wrapper supplementaire ici.
+          return _LessonsSection(unitId: unitId, axisId: null);
+        }
+        return Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+          child: Column(children: [for (final axis in axes) _AxisTile(axis: axis)]),
+        );
+      },
+    );
+  }
+}
+
+class _AxisTile extends ConsumerStatefulWidget {
+  const _AxisTile({required this.axis});
+
+  final AdminAxis axis;
+
+  @override
+  ConsumerState<_AxisTile> createState() => _AxisTileState();
+}
+
+class _AxisTileState extends ConsumerState<_AxisTile> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
+    final (label, variant) = contentStatusBadge(l10n, widget.axis.status);
+    final titleFr = widget.axis.titleFr;
+
+    // Axis.title_ar est NOT NULL cote API : toujours un titre a afficher,
+    // meme sans traduction FR (contrairement a Unit ou les deux peuvent
+    // manquer).
+    final Widget titleWidget = titleFr != null
+        ? Text(titleFr)
+        : Directionality(
+            textDirection: TextDirection.rtl,
+            child: Text(widget.axis.titleAr, textAlign: TextAlign.start),
+          );
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ExpansionTile(
+        onExpansionChanged: (value) => setState(() => _expanded = value),
+        title: Row(
+          children: [
+            Expanded(child: titleWidget),
+            if (titleFr == null) ...[
+              const SizedBox(width: 8),
+              AppBadge(label: l10n.titleFrUnavailable, variant: AppBadgeVariant.warning),
+            ],
+            const SizedBox(width: 8),
+            AppBadge(label: label, variant: variant),
+          ],
+        ),
+        subtitle: titleFr != null
+            ? Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text(widget.axis.titleAr, textAlign: TextAlign.start),
+                ),
+              )
+            : null,
+        children: [
+          if (_expanded) _LessonsSection(unitId: widget.axis.unitId, axisId: widget.axis.id),
+        ],
+      ),
+    );
+  }
+}
+
+class _LessonsSection extends ConsumerWidget {
+  const _LessonsSection({required this.unitId, this.axisId});
+
+  final String unitId;
+  final String? axisId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final query = (unitId: unitId, axisId: axisId);
+    final lessonsAsync = ref.watch(lessonsProvider(query));
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
@@ -273,7 +379,7 @@ class _LessonsSection extends ConsumerWidget {
         loading: () => const LoadingStateWidget(),
         error: (error, _) => ErrorStateWidget(
           message: l10n.contentLoadError,
-          onRetry: () => ref.invalidate(lessonsProvider(unitId)),
+          onRetry: () => ref.invalidate(lessonsProvider(query)),
         ),
         data: (lessons) {
           if (lessons.isEmpty) {
