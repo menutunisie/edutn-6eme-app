@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/network/dio_client.dart';
 import 'models/admin_axis.dart';
 import 'models/admin_lesson.dart';
+import 'models/admin_lesson_detail.dart';
 import 'models/admin_subject.dart';
 import 'models/admin_term.dart';
 import 'models/admin_unit.dart';
@@ -60,6 +61,12 @@ class ContentRepository {
         .map((json) => AdminLesson.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
+  /// Detail complet (avec content_sections) d'une Lesson.
+  Future<AdminLessonDetail> getLessonDetail(String lessonId) async {
+    final response = await _dio.get<Map<String, dynamic>>('/admin/lessons/$lessonId');
+    return AdminLessonDetail.fromJson(response.data!);
+  }
 }
 
 final Provider<ContentRepository> contentRepositoryProvider = Provider<ContentRepository>((ref) {
@@ -94,4 +101,11 @@ final lessonsProvider = FutureProvider.family<List<AdminLesson>, LessonsQuery>((
 
 final subjectsProvider = FutureProvider.autoDispose<List<AdminSubject>>((ref) {
   return ref.watch(contentRepositoryProvider).getSubjects();
+});
+
+final lessonDetailProvider = FutureProvider.autoDispose.family<AdminLessonDetail, String>((
+  ref,
+  lessonId,
+) {
+  return ref.watch(contentRepositoryProvider).getLessonDetail(lessonId);
 });

@@ -61,5 +61,7 @@
   "noSubjectsMessage": "لا توجد أي مادة حالياً.",
   "contentLoadError": "تعذّر تحميل المحتوى.",
   "retryButton": "إعادة المحاولة",
-  "titleFrUnavailable": "الفرنسية غير متوفرة"
+  "titleFrUnavailable": "الفرنسية غير متوفرة",
+  "noContentSectionsMessage": "لا يوجد محتوى منظّم لهذا الدرس حالياً.",
+  "mediaPlaceholderLabel": "رسم تخطيطي سيُضاف لاحقاً"
 }

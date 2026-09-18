@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -407,35 +408,52 @@ class _LessonRow extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(color: colors.background, borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.go('/admin/content/lessons/${lesson.id}'),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
               children: [
-                if (titleFr != null) Text(titleFr),
-                if (titleAr != null)
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Text(
-                      titleAr,
-                      textAlign: TextAlign.start,
-                      style: titleFr != null
-                          ? TextStyle(color: colors.textSecondary, fontSize: 13)
-                          : null,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (titleFr != null) Text(titleFr),
+                      if (titleAr != null)
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Text(
+                            titleAr,
+                            textAlign: TextAlign.start,
+                            style: titleFr != null
+                                ? TextStyle(color: colors.textSecondary, fontSize: 13)
+                                : null,
+                          ),
+                        ),
+                      if (titleFr == null && titleAr == null)
+                        Text('—', style: TextStyle(color: colors.textDisabled)),
+                    ],
                   ),
-                if (titleFr == null && titleAr == null)
-                  Text('—', style: TextStyle(color: colors.textDisabled)),
+                ),
+                const SizedBox(width: 8),
+                AppBadge(label: label, variant: variant),
+                const SizedBox(width: 4),
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left
+                      : Icons.chevron_right,
+                  color: colors.textTertiary,
+                  size: 20,
+                ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          AppBadge(label: label, variant: variant),
-        ],
+        ),
       ),
     );
   }

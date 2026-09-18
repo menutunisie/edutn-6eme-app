@@ -75,5 +75,7 @@
   "noSubjectsMessage": "Aucune matière pour le moment.",
   "contentLoadError": "Impossible de charger le contenu.",
   "retryButton": "Réessayer",
-  "titleFrUnavailable": "FR non disponible"
+  "titleFrUnavailable": "FR non disponible",
+  "noContentSectionsMessage": "Aucun contenu structuré pour cette leçon pour le moment.",
+  "mediaPlaceholderLabel": "Schéma à intégrer"
 }
