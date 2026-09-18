@@ -164,6 +164,10 @@ class _SectionCard extends StatelessWidget {
             const SizedBox(height: 12),
             _MediaNotePlaceholder(note: section.mediaNote!),
           ],
+          if (section.exercicesNonTranscrits != null) ...[
+            const SizedBox(height: 12),
+            _ExercicesNonTranscritsNote(note: section.exercicesNonTranscrits!),
+          ],
         ],
       ),
     );
@@ -208,6 +212,61 @@ class _MediaNotePlaceholder extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Note distincte du placeholder media : ce n'est pas un contenu manquant a
+/// integrer, mais un resume assume d'exercices reellement presents dans le
+/// manuel et volontairement non transcrits integralement (format
+/// "structure-representatif" des leçons de mathematiques). Bordure pleine,
+/// pas de pointille, pour ne pas laisser croire a un contenu incomplet.
+class _ExercicesNonTranscritsNote extends StatelessWidget {
+  const _ExercicesNonTranscritsNote({required this.note});
+
+  final String note;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = context.colors;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: colors.borderStrong),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.list_alt_outlined, color: colors.textTertiary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.exercicesNonTranscritsLabel,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontWeight: FontWeight.w600, color: colors.textSecondary),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    note,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(color: colors.textTertiary, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

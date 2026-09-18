@@ -77,5 +77,6 @@
   "retryButton": "Réessayer",
   "titleFrUnavailable": "FR non disponible",
   "noContentSectionsMessage": "Aucun contenu structuré pour cette leçon pour le moment.",
-  "mediaPlaceholderLabel": "Schéma à intégrer"
+  "mediaPlaceholderLabel": "Schéma à intégrer",
+  "exercicesNonTranscritsLabel": "Exercices additionnels non transcrits"
 }

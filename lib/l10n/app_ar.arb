@@ -63,5 +63,6 @@
   "retryButton": "إعادة المحاولة",
   "titleFrUnavailable": "الفرنسية غير متوفرة",
   "noContentSectionsMessage": "لا يوجد محتوى منظّم لهذا الدرس حالياً.",
-  "mediaPlaceholderLabel": "رسم تخطيطي سيُضاف لاحقاً"
+  "mediaPlaceholderLabel": "رسم تخطيطي سيُضاف لاحقاً",
+  "exercicesNonTranscritsLabel": "تمارين إضافية غير مُدرجة"
 }

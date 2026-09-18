@@ -12,6 +12,7 @@ class LessonContentSection {
     required this.bodyAr,
     required this.bodyFr,
     required this.mediaNote,
+    required this.exercicesNonTranscrits,
   });
 
   final int order;
@@ -22,6 +23,11 @@ class LessonContentSection {
   final String? bodyFr;
   final String? mediaNote;
 
+  /// Resume des exercices du manuel non transcrits integralement (format
+  /// "structure-representatif" des leçons de mathematiques). Absent des
+  /// leçons de sciences, transcrites exhaustivement.
+  final String? exercicesNonTranscrits;
+
   factory LessonContentSection.fromJson(Map<String, dynamic> json) => LessonContentSection(
     order: json['order'] as int,
     phaseKey: json['phase_key'] as String,
@@ -30,5 +36,6 @@ class LessonContentSection {
     bodyAr: json['body_ar'] as String,
     bodyFr: json['body_fr'] as String?,
     mediaNote: json['media_note'] as String?,
+    exercicesNonTranscrits: json['exercices_non_transcrits'] as String?,
   );
 }
