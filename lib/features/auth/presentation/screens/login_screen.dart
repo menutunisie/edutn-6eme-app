@@ -38,6 +38,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     AuthError.disabledAccount => l10n.errorDisabledAccount,
     AuthError.sessionExpired => l10n.errorSessionExpired,
     AuthError.network => l10n.errorGeneric,
+    // Jamais declenche par ce flux (voir SplashScreen) ; couvert ici pour
+    // l'exhaustivite du switch.
+    AuthError.devBypassLoginFailed => l10n.devBypassLoginFailedMessage,
   };
 
   @override

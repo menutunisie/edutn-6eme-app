@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/config/dev_flags.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
@@ -33,7 +32,7 @@ class AdaptiveScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final role = effectiveRole(ref.watch(authControllerProvider).user?.role);
+    final role = ref.watch(authControllerProvider).user?.role;
 
     // Le guard de app_router.dart empeche normalement d'atteindre une route
     // de la shell sans utilisateur authentifie ; filet de securite minimal.

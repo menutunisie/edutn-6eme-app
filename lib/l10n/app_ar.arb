@@ -13,6 +13,7 @@
   "errorDisabledAccount": "تم تعطيل هذا الحساب.",
   "errorGeneric": "حدث خطأ ما. تحقق من اتصالك بالإنترنت.",
   "errorSessionExpired": "انتهت صلاحية جلستك، يرجى تسجيل الدخول مجدداً.",
+  "devBypassLoginFailedMessage": "تعذّر تسجيل الدخول التلقائي الخاص بالتطوير. تحقّق من أنّ الخادم يعمل وأنّ بيانات الدخول الافتراضية للمدير (ADMIN_DEFAULT_EMAIL / ADMIN_DEFAULT_PASSWORD) صحيحة.",
 
   "forbiddenTitle": "الوصول مرفوض",
   "forbiddenMessage": "لا يسمح لك دورك بالوصول إلى هذه الصفحة.",

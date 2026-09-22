@@ -16,6 +16,7 @@
   "errorDisabledAccount": "Ce compte est désactivé.",
   "errorGeneric": "Une erreur est survenue. Vérifiez votre connexion.",
   "errorSessionExpired": "Votre session a expiré, veuillez vous reconnecter.",
+  "devBypassLoginFailedMessage": "Connexion automatique de développement échouée. Vérifiez que le backend est démarré et que les identifiants admin par défaut (ADMIN_DEFAULT_EMAIL / ADMIN_DEFAULT_PASSWORD) sont corrects.",
 
   "forbiddenTitle": "Accès refusé",
   "forbiddenMessage": "Votre rôle ne permet pas d'accéder à cette page.",

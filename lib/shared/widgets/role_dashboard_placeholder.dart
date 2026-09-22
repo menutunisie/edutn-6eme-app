@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/config/dev_flags.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
@@ -22,7 +21,7 @@ class RoleDashboardPlaceholder extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
     final user = ref.watch(authControllerProvider).user;
-    final role = effectiveRole(user?.role);
+    final role = user?.role;
 
     return Center(
       child: ConstrainedBox(

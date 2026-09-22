@@ -34,15 +34,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isSplash = location == '/';
       final isLoginPage = location == '/login';
 
+      final authState = ref.read(authControllerProvider);
+
       if (kBypassAuthForDev) {
-        // Contournement dev (voir lib/core/config/dev_flags.dart) : saute la
-        // verification d'authentification, envoie directement sur "Gestion
-        // de contenu". AuthController/AuthRepository ne sont pas sollicites
-        // par ce chemin.
+        // Contournement dev (voir lib/core/config/dev_flags.dart) : le vrai
+        // AuthState pilote la navigation (login reel effectue par
+        // AuthController._bootstrapDevBypass au demarrage) -- pas une
+        // redirection aveugle. Tant que ce n'est pas authenticated (login en
+        // cours OU echoue), on reste sur / pour que SplashScreen affiche le
+        // chargement ou l'erreur, sans jamais rebondir vers /login.
+        if (!authState.isAuthenticated) {
+          return isSplash ? null : '/';
+        }
         return (isSplash || isLoginPage) ? '/admin/content' : null;
       }
-
-      final authState = ref.read(authControllerProvider);
 
       if (authState.status == AuthStatus.unknown) {
         return isSplash ? null : '/';
