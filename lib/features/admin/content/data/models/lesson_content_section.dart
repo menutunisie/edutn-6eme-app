@@ -13,6 +13,7 @@ class LessonContentSection {
     required this.bodyFr,
     required this.mediaNote,
     required this.exercicesNonTranscrits,
+    required this.resourceUrl,
   });
 
   final int order;
@@ -28,6 +29,11 @@ class LessonContentSection {
   /// leçons de sciences, transcrites exhaustivement.
   final String? exercicesNonTranscrits;
 
+  /// URL de l'image reelle (calculee cote API a partir de resource_id),
+  /// quand un schema a ete importe pour cette phase. mediaNote reste alors
+  /// affiche comme legende, ce n'est plus un placeholder.
+  final String? resourceUrl;
+
   factory LessonContentSection.fromJson(Map<String, dynamic> json) => LessonContentSection(
     order: json['order'] as int,
     phaseKey: json['phase_key'] as String,
@@ -37,5 +43,6 @@ class LessonContentSection {
     bodyFr: json['body_fr'] as String?,
     mediaNote: json['media_note'] as String?,
     exercicesNonTranscrits: json['exercices_non_transcrits'] as String?,
+    resourceUrl: json['resource_url'] as String?,
   );
 }

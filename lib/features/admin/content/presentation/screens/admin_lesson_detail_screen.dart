@@ -160,7 +160,10 @@ class _SectionCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(section.bodyFr!, style: Theme.of(context).textTheme.bodyMedium),
           ],
-          if (section.mediaNote != null) ...[
+          if (section.resourceUrl != null) ...[
+            const SizedBox(height: 12),
+            _ResourceImage(url: section.resourceUrl!, caption: section.mediaNote),
+          ] else if (section.mediaNote != null) ...[
             const SizedBox(height: 12),
             _MediaNotePlaceholder(note: section.mediaNote!),
           ],
@@ -170,6 +173,70 @@ class _SectionCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Image reelle d'un schema importe (resource_url resolu cote API).
+/// [caption] reprend mediaNote comme legende descriptive (plus un
+/// placeholder a ce stade). Etat de chargement + erreur basiques.
+class _ResourceImage extends StatelessWidget {
+  const _ResourceImage({required this.url, required this.caption});
+
+  final String url;
+  final String? caption;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: Image.network(
+            url,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              return SizedBox(
+                height: 160,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: progress.expectedTotalBytes != null
+                        ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) => Container(
+              height: 120,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: colors.surfaceSecondary,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.broken_image_outlined, color: colors.textTertiary),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Image indisponible',
+                    style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (caption != null) ...[
+          const SizedBox(height: 6),
+          Text(caption!, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
+        ],
+      ],
     );
   }
 }
