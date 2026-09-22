@@ -12,6 +12,7 @@ import '../../shared/models/user_role.dart';
 import '../../shared/widgets/adaptive_scaffold.dart';
 import '../../shared/widgets/forbidden_screen.dart';
 import '../../shared/widgets/role_dashboard_placeholder.dart';
+import '../config/dev_flags.dart';
 
 /// Routing avec authentification, garde par role et coquille de navigation
 /// adaptative (Etape 4).
@@ -29,10 +30,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      final authState = ref.read(authControllerProvider);
       final location = state.matchedLocation;
       final isSplash = location == '/';
       final isLoginPage = location == '/login';
+
+      if (kBypassAuthForDev) {
+        // Contournement dev (voir lib/core/config/dev_flags.dart) : saute la
+        // verification d'authentification, envoie directement sur "Gestion
+        // de contenu". AuthController/AuthRepository ne sont pas sollicites
+        // par ce chemin.
+        return (isSplash || isLoginPage) ? '/admin/content' : null;
+      }
+
+      final authState = ref.read(authControllerProvider);
 
       if (authState.status == AuthStatus.unknown) {
         return isSplash ? null : '/';

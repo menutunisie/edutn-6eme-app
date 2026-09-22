@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/dev_flags.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
@@ -21,6 +22,7 @@ class RoleDashboardPlaceholder extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
     final user = ref.watch(authControllerProvider).user;
+    final role = effectiveRole(user?.role);
 
     return Center(
       child: ConstrainedBox(
@@ -34,7 +36,7 @@ class RoleDashboardPlaceholder extends ConsumerWidget {
                 Icon(Icons.dashboard_customize_outlined, size: 40, color: colors.primary),
                 const SizedBox(height: 16),
                 Text(
-                  l10n.connectedAs(user?.fullName ?? '-', roleLabel(l10n, user?.role ?? UserRole.student)),
+                  l10n.connectedAs(user?.fullName ?? '-', roleLabel(l10n, role ?? UserRole.student)),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
@@ -44,7 +46,7 @@ class RoleDashboardPlaceholder extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
-                if (user?.role == UserRole.admin) ...[
+                if (role == UserRole.admin) ...[
                   const SizedBox(height: 20),
                   AppButton(
                     label: l10n.manageUsersButton,
