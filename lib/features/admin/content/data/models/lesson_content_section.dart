@@ -14,6 +14,7 @@ class LessonContentSection {
     required this.mediaNote,
     required this.exercicesNonTranscrits,
     required this.resourceUrl,
+    required this.resourceUrls,
   });
 
   final int order;
@@ -34,6 +35,11 @@ class LessonContentSection {
   /// affiche comme legende, ce n'est plus un placeholder.
   final String? resourceUrl;
 
+  /// URLs de plusieurs images reelles (calculees a partir de resource_ids),
+  /// quand une phase a plusieurs schemas. Mutuellement exclusif avec
+  /// [resourceUrl] : jamais les deux renseignes sur la meme phase.
+  final List<String>? resourceUrls;
+
   factory LessonContentSection.fromJson(Map<String, dynamic> json) => LessonContentSection(
     order: json['order'] as int,
     phaseKey: json['phase_key'] as String,
@@ -44,5 +50,6 @@ class LessonContentSection {
     mediaNote: json['media_note'] as String?,
     exercicesNonTranscrits: json['exercices_non_transcrits'] as String?,
     resourceUrl: json['resource_url'] as String?,
+    resourceUrls: (json['resource_urls'] as List<dynamic>?)?.cast<String>(),
   );
 }
